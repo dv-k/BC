@@ -1,9 +1,10 @@
-﻿using System;
+﻿using FFMpegCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Xabe.FFmpeg;
+
 
 namespace BlackCleaner.WPF.Model
 {
@@ -18,10 +19,11 @@ namespace BlackCleaner.WPF.Model
         public string FileName { get; }
         public TimeSpan Timestamp { get; }
 
-        public async Task LoadFile(string inputfile)
+        public async Task<Boolean> LoadFile(string inputfile)
         {
-            IConversion result = await FFmpeg.Conversions.FromSnippet.Snapshot(inputfile, FileName, Timestamp);
-            await result.Start();
+          return await FFMpeg.SnapshotAsync(inputfile, FileName,captureTime:Timestamp);
+
+
         }
     }
 }

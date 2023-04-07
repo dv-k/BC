@@ -1,17 +1,28 @@
 ﻿using BlackCleaner.WPF.Model;
+using BlackCleaner.WPF.Services;
+using FFmpegArgs;
+using FFmpegArgs.Cores;
+using FFmpegArgs.Cores.Inputs;
+using FFmpegArgs.Executes;
+using FFmpegArgs.Inputs;
+using FFMpegCore;
+using FFMpegCore.Enums;
 using Microsoft.Win32;
 using Prism.Commands;
 using Prism.Mvvm;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
+using System.IO.Pipes;
 using System.Linq;
 using System.Net.NetworkInformation;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Controls;
 using System.Windows.Media.TextFormatting;
-using Xabe.FFmpeg;
-using Xabe.FFmpeg.Downloader;
+
 
 namespace BlackCleaner.WPF.ViewModels
 {
@@ -20,10 +31,11 @@ namespace BlackCleaner.WPF.ViewModels
     /// </summary>
     public class ShellViewModel : BindableBase
     {
-  
+        private readonly Ffprobe _ffprobe;
 
-        public ShellViewModel()
+        public ShellViewModel(Ffprobe ffprobe)
         {
+            _ffprobe = ffprobe;
             OpenFileCommand = new DelegateCommand<object>(OpenFileCommandAction, CanOpenFileCommandAction);
 
         
@@ -69,8 +81,8 @@ namespace BlackCleaner.WPF.ViewModels
         #endregion
 
         #region property MediaInfo
-        private IMediaInfo _mediaInfo ;
-        public IMediaInfo MediaInfo { get => _mediaInfo; private set => SetProperty(ref _mediaInfo, value, MediaInfoChanged); }
+        private MediaInfo _mediaInfo ;
+        public MediaInfo MediaInfo { get => _mediaInfo; private set => SetProperty(ref _mediaInfo, value, MediaInfoChanged); }
 
         private void MediaInfoChanged()
         {
@@ -105,12 +117,45 @@ namespace BlackCleaner.WPF.ViewModels
         async void LoadFile()
         {
             Status = "Подождите...";
-             await FFmpegDownloader.GetLatestVersion(FFmpegVersion.Official);
 
-            MediaInfo = await FFmpeg.GetMediaInfo(PathFile);
-          
+            this.MediaInfo =  _ffprobe.GetMediaInfo(PathFile);
 
-            await LoadPreviews();
+         /*   using (Process build = new Process())
+            {
+               // build.StartInfo.WorkingDirectory = @"dir";
+                build.StartInfo.Arguments = $"-i \"{PathFile}\" -vf cropdetect,metadata=mode=print -f null -";
+                build.StartInfo.FileName = "ffmpeg.exe";
+
+                build.StartInfo.UseShellExecute = false;
+                build.StartInfo.RedirectStandardOutput = true;
+                build.StartInfo.RedirectStandardError = true;
+                build.StartInfo.CreateNoWindow = true;
+                build.ErrorDataReceived += build_ErrorDataReceived;
+                build.OutputDataReceived += build_ErrorDataReceived;
+                build.EnableRaisingEvents = true;
+                build.Start();
+                build.BeginOutputReadLine();
+                build.BeginErrorReadLine();
+                build.WaitForExit();
+            }
+         */
+
+
+
+
+
+
+
+
+
+
+        }
+
+        static void build_ErrorDataReceived(object sender, DataReceivedEventArgs e)
+        {
+            //string strMessage =
+            Debug.WriteLine( e.Data);
+
         }
         async Task LoadPreviews()
         {

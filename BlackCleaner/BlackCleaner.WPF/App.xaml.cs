@@ -1,4 +1,6 @@
-﻿using BlackCleaner.WPF.Views;
+﻿using BlackCleaner.WPF.Services;
+using BlackCleaner.WPF.Views;
+
 using Prism.Ioc;
 using System;
 using System.Collections.Generic;
@@ -20,7 +22,7 @@ namespace BlackCleaner.WPF
             /// <inheritdoc />
             protected override void RegisterTypes(IContainerRegistry containerRegistry)
             {
-           
+            containerRegistry.RegisterSingleton<Ffprobe>();
             }
 
             /// <inheritdoc />

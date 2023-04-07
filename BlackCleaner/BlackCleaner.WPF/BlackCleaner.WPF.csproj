@@ -8,9 +8,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="FFmpegArgs" Version="1.5.0" />
+    <PackageReference Include="FFmpegArgs.Executes" Version="1.5.0" />
+    <PackageReference Include="FFmpegArgs.Inputs" Version="1.5.0" />
+    <PackageReference Include="FFMpegCore" Version="5.1.0" />
     <PackageReference Include="Prism.DryIoc" Version="8.1.97" />
-    <PackageReference Include="Xabe.FFmpeg" Version="5.2.6" />
-    <PackageReference Include="Xabe.FFmpeg.Downloader" Version="5.2.6" />
   </ItemGroup>
 
 </Project>
