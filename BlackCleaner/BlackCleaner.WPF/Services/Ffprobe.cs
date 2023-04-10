@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -46,8 +47,7 @@ namespace BlackCleaner.WPF.Services
             {
               
                 build.StartInfo.Arguments = arg;
-                build.StartInfo.FileName = "ffprobe.exe";
-
+                build.StartInfo.FileName = Path.Combine("ffmpeg", "ffprobe.exe");
                 build.StartInfo.UseShellExecute = false;
                 build.StartInfo.RedirectStandardOutput = true;
                 build.StartInfo.RedirectStandardError = true;

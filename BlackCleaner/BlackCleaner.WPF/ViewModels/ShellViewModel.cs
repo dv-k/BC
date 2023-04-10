@@ -1,12 +1,6 @@
 ﻿using BlackCleaner.WPF.Model;
 using BlackCleaner.WPF.Services;
-using FFmpegArgs;
-using FFmpegArgs.Cores;
-using FFmpegArgs.Cores.Inputs;
-using FFmpegArgs.Executes;
-using FFmpegArgs.Inputs;
-using FFMpegCore;
-using FFMpegCore.Enums;
+
 using Microsoft.Win32;
 using Prism.Commands;
 using Prism.Mvvm;
@@ -32,10 +26,13 @@ namespace BlackCleaner.WPF.ViewModels
     public class ShellViewModel : BindableBase
     {
         private readonly Ffprobe _ffprobe;
-
-        public ShellViewModel(Ffprobe ffprobe)
+        private readonly Ffmpeg _ffmpeg;
+        
+        public ShellViewModel(Ffprobe ffprobe, Ffmpeg ffmpeg)
         {
             _ffprobe = ffprobe;
+            _ffmpeg= ffmpeg;
+
             OpenFileCommand = new DelegateCommand<object>(OpenFileCommandAction, CanOpenFileCommandAction);
 
         
@@ -56,7 +53,7 @@ namespace BlackCleaner.WPF.ViewModels
 
         private async void CountPreviewsChanged()
         {
-           await LoadPreviews();
+            LoadPreviews();
         }
         #endregion
         #region property PathFile
@@ -119,36 +116,11 @@ namespace BlackCleaner.WPF.ViewModels
             Status = "Подождите...";
 
             this.MediaInfo =  _ffprobe.GetMediaInfo(PathFile);
+            await LoadPreviews();
 
-         /*   using (Process build = new Process())
-            {
-               // build.StartInfo.WorkingDirectory = @"dir";
-                build.StartInfo.Arguments = $"-i \"{PathFile}\" -vf cropdetect,metadata=mode=print -f null -";
-                build.StartInfo.FileName = "ffmpeg.exe";
-
-                build.StartInfo.UseShellExecute = false;
-                build.StartInfo.RedirectStandardOutput = true;
-                build.StartInfo.RedirectStandardError = true;
-                build.StartInfo.CreateNoWindow = true;
-                build.ErrorDataReceived += build_ErrorDataReceived;
-                build.OutputDataReceived += build_ErrorDataReceived;
-                build.EnableRaisingEvents = true;
-                build.Start();
-                build.BeginOutputReadLine();
-                build.BeginErrorReadLine();
-                build.WaitForExit();
-            }
-         */
-
-
-
-
-
-
-
-
-
-
+            Status = "Поиск области...";
+           var obl =  await _ffmpeg.CropdetectAsync(PathFile);
+            Status = "Готово!";
         }
 
         static void build_ErrorDataReceived(object sender, DataReceivedEventArgs e)
@@ -179,7 +151,7 @@ namespace BlackCleaner.WPF.ViewModels
                 tinks += step;
             }
 
-          await   Parallel.ForEachAsync(previews, async (item, token)=>  await item.LoadFile(this.PathFile));
+           await   Parallel.ForEachAsync(previews, async (item, token) => await _ffmpeg.SnapshotAsync(PathFile, item.FileName, item.Timestamp));
 
 
             Previews = previews;

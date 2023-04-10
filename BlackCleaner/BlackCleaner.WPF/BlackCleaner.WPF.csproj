@@ -8,11 +8,19 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="FFmpegArgs" Version="1.5.0" />
-    <PackageReference Include="FFmpegArgs.Executes" Version="1.5.0" />
-    <PackageReference Include="FFmpegArgs.Inputs" Version="1.5.0" />
-    <PackageReference Include="FFMpegCore" Version="5.1.0" />
     <PackageReference Include="Prism.DryIoc" Version="8.1.97" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="ffmpeg\ffmpeg.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="ffmpeg\ffplay.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="ffmpeg\ffprobe.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>
