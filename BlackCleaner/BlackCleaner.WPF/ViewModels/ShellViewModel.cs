@@ -4,6 +4,7 @@ using BlackCleaner.WPF.Services;
 using Microsoft.Win32;
 using Prism.Commands;
 using Prism.Mvvm;
+using Prism.Services.Dialogs;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -27,11 +28,13 @@ namespace BlackCleaner.WPF.ViewModels
     {
         private readonly Ffprobe _ffprobe;
         private readonly Ffmpeg _ffmpeg;
-        
-        public ShellViewModel(Ffprobe ffprobe, Ffmpeg ffmpeg)
+        private readonly IDialogService _dialogService;
+
+        public ShellViewModel(Ffprobe ffprobe, Ffmpeg ffmpeg, IDialogService dialogService)
         {
             _ffprobe = ffprobe;
             _ffmpeg= ffmpeg;
+            _dialogService= dialogService;
 
             OpenFileCommand = new DelegateCommand<object>(OpenFileCommandAction, CanOpenFileCommandAction);
 
@@ -72,6 +75,72 @@ namespace BlackCleaner.WPF.ViewModels
         public List<ScreenshotInfo> Previews { get => _previews; set => SetProperty(ref _previews, value, PreviewsChanged); }
 
         private void PreviewsChanged()
+        {
+
+        }
+        #endregion
+
+        #region property SelectedPreview
+        private ScreenshotInfo _selectedPreview = null;
+        public ScreenshotInfo SelectedPreview { get => _selectedPreview; set => SetProperty(ref _selectedPreview, value, SelectedPreviewChanged); }
+
+        private void SelectedPreviewChanged()
+        {
+            if (_selectedPreview != null )
+            {
+                if(_selectedcropdetectInfo != null && _mediaInfo !=null)
+                {
+                    DialogParameters dp = new DialogParameters();
+                    dp.Add("IP_CropdetectInfo", new CropdetectInfo(SelectedCropdetectInfo));
+                    dp.Add("IP_ScreenshotInfo", SelectedPreview);
+                    dp.Add("IP_MediaInfo", MediaInfo);
+                    _dialogService.ShowDialog("ImagePreview", dp, x =>
+                    {
+                        var newCI = x.Parameters.GetValue<CropdetectInfo>("IP_CropdetectInfo");
+                        if (newCI != null)
+                        {
+                            var r = this.CropdetectInfo.Find(y => y.X1 == newCI.X1 && y.Y1 == newCI.Y1 && y.X2 == newCI.X2 && y.Y2 == newCI.Y2);
+                            if (r != null)
+                            {
+                                this.SelectedCropdetectInfo = r;
+                            }
+                            else
+                            {
+                                this.CropdetectInfo.Add(newCI);
+                                this.OnPropertyChanged(new System.ComponentModel.PropertyChangedEventArgs(nameof(CropdetectInfo)));
+                                this.SelectedCropdetectInfo = newCI;
+                            }
+                        }
+                        this.SelectedPreview = null;
+                    });
+                }
+                else
+                    this.SelectedPreview = null;
+
+            }
+        }
+        #endregion
+
+        #region property CropdetectInfo
+        private List<CropdetectInfo> _cropdetectInfo = new List<CropdetectInfo>();
+        public List<CropdetectInfo> CropdetectInfo { get => _cropdetectInfo; set => SetProperty(ref _cropdetectInfo, value, CropdetectInfoChanged); }
+
+        private void CropdetectInfoChanged()
+        {
+            if (_cropdetectInfo.Count > 0)
+                SelectedCropdetectInfo = _cropdetectInfo[0];
+            else
+                SelectedCropdetectInfo = null;
+        }
+        #endregion
+
+
+
+        #region property SelectedCropdetectInfo
+        private CropdetectInfo _selectedcropdetectInfo = null;
+        public CropdetectInfo SelectedCropdetectInfo { get => _selectedcropdetectInfo; set => SetProperty(ref _selectedcropdetectInfo, value, SelectedCropdetectInfoChanged); }
+
+        private void SelectedCropdetectInfoChanged()
         {
 
         }
@@ -119,16 +188,10 @@ namespace BlackCleaner.WPF.ViewModels
             await LoadPreviews();
 
             Status = "Поиск области...";
-           var obl =  await _ffmpeg.CropdetectAsync(PathFile);
+            CropdetectInfo = (await _ffmpeg.CropdetectAsync(PathFile)).DistinctBy(x=> x.X1 * x.X2  + x.Y1 * x.Y2).ToList();
             Status = "Готово!";
         }
 
-        static void build_ErrorDataReceived(object sender, DataReceivedEventArgs e)
-        {
-            //string strMessage =
-            Debug.WriteLine( e.Data);
-
-        }
         async Task LoadPreviews()
         {
             Status = "Загрузка превью..."; 

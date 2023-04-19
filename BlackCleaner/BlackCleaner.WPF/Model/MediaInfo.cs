@@ -8,11 +8,15 @@ namespace BlackCleaner.WPF.Model
 {
     public class MediaInfo
     {
-        public MediaInfo(TimeSpan duration)
+        public MediaInfo(TimeSpan duration, double width, double height)
         {
             Duration = duration;
+            Width = width;
+            Height = height;
         }
 
         public TimeSpan Duration { get;}
+        public double Width { get;}
+        public double Height { get;}
     }
 }

@@ -396,3 +396,7 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+BlackCleaner/BlackCleaner.WPF/ffmpeg/ffmpeg.exe
+BlackCleaner/BlackCleaner.WPF/ffmpeg/ffplay.exe
+BlackCleaner/BlackCleaner.WPF/Services/Ffmpeg.cs
+BlackCleaner/BlackCleaner.WPF/ffmpeg/ffprobe.exe

@@ -13,7 +13,7 @@ using System.Windows.Navigation;
 
 namespace BlackCleaner.WPF.Services
 {
-    public class Ffmpeg
+    public class Ffmpeg : FfmpegBase
     {
         public Ffmpeg() 
         { 
@@ -28,19 +28,20 @@ namespace BlackCleaner.WPF.Services
         {
             DebugStart();
             var allLine =  string.Join("\n", Start($"-i \"{inputfile}\" -vf cropdetect,metadata=mode=print -f null -"));
-            //\s?w:(\d?)\s?h:(\d?)\s?x:(\d?)\s?y:(\d?)\s?prs:(\d?)\s?t:([\d.]?)]
-            //
-            Regex regex = new Regex(@"x1:(\d+)\s*x2:(\d+)\s*y1:(\d+)\s*y2:(\d+)[\s\dxyhwpts:]*t:([\d.]+)");
+
+
+       // Duration:\s * ([\d:.] *)[\d\D] * Stream *[\d\D] *,\s(\d +)x(\d +)
+            Regex regex = new Regex(@"x1:(\d+)\s*x2:(\d+)\s*y1:(\d+)\s*y2:(\d+)\s*w:(\d+)\s*h:(\d+)[xypts:\d\s]*\s+t:([\d.]+)");
             MatchCollection matches = regex.Matches(allLine);
             List<CropdetectInfo> result = new List<CropdetectInfo>();
             for (int i = 0; i < matches.Count; i++)
             {
                 var match = matches[i];
-                result.Add(new CropdetectInfo(TimeSpan.Parse(match.Groups[5].Value.Replace('.', ':')),
-                long.Parse(match.Groups[1].Value),
-                long.Parse(match.Groups[2].Value),
-                long.Parse(match.Groups[3].Value),
-                long.Parse(match.Groups[4].Value)));
+                result.Add(new CropdetectInfo( TimeSpan.FromSeconds(Double.Parse(match.Groups[5].Value.Replace('.', ','))),
+                double.Parse(match.Groups[1].Value),
+                double.Parse(match.Groups[2].Value),
+                double.Parse(match.Groups[3].Value),
+                double.Parse(match.Groups[4].Value), double.Parse(match.Groups[5].Value), double.Parse(match.Groups[6].Value)));
             }
 
             return result;
@@ -58,46 +59,11 @@ namespace BlackCleaner.WPF.Services
             Start($"-i \"{inputfile}\" -ss {time} -frames:v 1 \"{outputfile}\"");
             return File.Exists(outputfile);
         }
-        private List<string> Start(string arg)
+     
+
+        public override List<string> Start(string arg)
         {
-
-            using (Process build = new Process())
-            {
-
-                build.StartInfo.Arguments = arg;
-                build.StartInfo.FileName = Path.Combine("ffmpeg", "ffmpeg.exe");
-
-                build.StartInfo.UseShellExecute = false;
-                build.StartInfo.RedirectStandardOutput = true;
-                build.StartInfo.RedirectStandardError = true;
-                build.StartInfo.CreateNoWindow = true;
-                build.EnableRaisingEvents = true;
-
-                var output = new List<string>();
-   
-                build.ErrorDataReceived += DR;
-                build.OutputDataReceived += DR;
-                void DR(object sender, DataReceivedEventArgs e) 
-                    {
-                        Debug.WriteLine(e.Data);
-                        output.Add(e.Data);
-                    };
-              
-                build.Start();
-                build.BeginErrorReadLine();
-                build.BeginOutputReadLine();
-                build.WaitForExit();
-
-              
-           
-                return output;
-            }
-        }
-
-
-        private void DebugStart([CallerMemberName] string arg = "N/A")
-        {
-            Debug.WriteLine($"Start '{arg}'...");
+            return this.Start(Path.Combine("ffmpeg", "ffmpeg.exe"), arg);
         }
     }
 }

@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace BlackCleaner.WPF.Services
 {
-    public class Ffprobe
+    public class Ffprobe : FfmpegBase
     {
         public Ffprobe()
         {
@@ -18,58 +18,31 @@ namespace BlackCleaner.WPF.Services
         }
         public MediaInfo GetMediaInfo (string inputfile)
         {
-            var data = Start(inputfile, $"-i {inputfile}");
-           var durationLine = data.Find((x) => x.StartsWith("Duration"));
-            if (durationLine == null)
-                throw new Exception("duration not found");
+            DebugStart();
 
-            Regex regex = new Regex(@"^Duration: ([\d:.]*),");
-            MatchCollection matches = regex.Matches(durationLine);
-            if (matches.Count > 0)
+
+            DebugStart();
+            var allLine = string.Join(" ", Start($"-i {inputfile}"));
+
+            Regex regex = new Regex(@"Duration:\s*([\d:.]*)[\d\D]*Stream*[\d\D]*,\s(\d+)x(\d+)");
+            MatchCollection matches = regex.Matches(allLine);
+        
+
+            if(matches.Count > 0) 
             {
-
-                return new MediaInfo(TimeSpan.Parse(matches[0].Groups[1].Value));
-;
+                var match = matches[0];
+                return new MediaInfo(TimeSpan.Parse(match.Groups[1].Value), Double.Parse(match.Groups[2].Value), Double.Parse(match.Groups[3].Value));
             }
-            else
-            {
-                throw new Exception("duration not found");
-            }
+            return null;
 
-          
-           
+
+
+
         }
 
-        private List<string>  Start(string inputfile, string arg)
+        public override List<string> Start(string arg)
         {
-
-            using (Process build = new Process())
-            {
-              
-                build.StartInfo.Arguments = arg;
-                build.StartInfo.FileName = Path.Combine("ffmpeg", "ffprobe.exe");
-                build.StartInfo.UseShellExecute = false;
-                build.StartInfo.RedirectStandardOutput = true;
-                build.StartInfo.RedirectStandardError = true;
-                build.StartInfo.CreateNoWindow = true;
-           
-                build.EnableRaisingEvents = true;
-                build.Start();
-         
-                var output = new List<string>();
-
-                while (build.StandardOutput.Peek() > -1)
-                {
-                    output.Add(build.StandardOutput.ReadLine().Trim());
-                }
-
-                while (build.StandardError.Peek() > -1)
-                {
-                    output.Add(build.StandardError.ReadLine().Trim());
-                }
-                build.WaitForExit();;
-                return output;
-            }
+            return this.Start(Path.Combine("ffmpeg", "ffprobe.exe"), arg);
         }
     }
 }
