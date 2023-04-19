@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:BlackCleaner.WPF.Views"
              mc:Ignorable="d" 
-             xmlns:prism="http://prismlibrary.com/"
+             xmlns:prism="http://prismlibrary.com/" xmlns:i="http://schemas.microsoft.com/xaml/behaviors" xmlns:ui="clr-namespace:BlackCleaner.WPF.UI"
              prism:ViewModelLocator.AutoWireViewModel="True"
              d:DesignHeight="450" d:DesignWidth="800"
 
@@ -13,9 +13,8 @@
     <prism:Dialog.WindowStyle>
         <Style TargetType="Window">
             <Setter Property="prism:Dialog.WindowStartupLocation" Value="CenterScreen" />
-            <Setter Property="ResizeMode" Value="NoResize"/>
 
-            <Setter Property="MaxHeight" Value="800"/>
+            <Setter Property="Height" Value="800"/>
         </Style>
     </prism:Dialog.WindowStyle>
     <Grid>
@@ -31,18 +30,8 @@
         <TextBox Grid.Column="2"  Margin="5,10,5,0" TextWrapping="Wrap" Text="{Binding CropdetectInfo.X1}" VerticalAlignment="Top" Width="50"/>
         <TextBox Grid.Column="2"  Margin="5,41,5,0" TextWrapping="Wrap" Text="{Binding CropdetectInfo.Y1}" VerticalAlignment="Top" Width="50"/>
         <TextBox Grid.Column="2"  Margin="5,72,5,0" TextWrapping="Wrap" Text="{Binding CropdetectInfo.X2}" VerticalAlignment="Top" Width="50"/>
-            <TextBox Grid.Column="2"  Margin="5,103,5,0" TextWrapping="Wrap" Text="{Binding CropdetectInfo.Y2}" VerticalAlignment="Top" Width="50"/>
+        <TextBox Grid.Column="2"  Margin="5,103,5,0" TextWrapping="Wrap" Text="{Binding CropdetectInfo.Y2}" VerticalAlignment="Top" Width="50"/>
         <Button Grid.Column="1"  Command="{Binding CloseCommand}" Content="Принять" Margin="5,0,5,10" VerticalAlignment="Bottom" Grid.ColumnSpan="2"/>
-        <Image  Width="{Binding WidthPreview, Mode=TwoWay}" Height="{ Binding HeightPreview, Mode=TwoWay}"  VerticalAlignment="Center" HorizontalAlignment="Center"  Source="{Binding Preview.FileName}" >
-            <Image.OpacityMask>
-                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                    <GradientStop Color="#FFFF5757"/>
-                    <GradientStop Color="#FFF3BCBC" Offset="1"/>
-                </LinearGradientBrush>
-            </Image.OpacityMask>
-        </Image>
-        <Rectangle   Width="{Binding WidthRegion}" Height="{Binding HeightRegion}" VerticalAlignment="Center" HorizontalAlignment="Center" Fill="#7F8C4A4A">
-            
-        </Rectangle>
+        <ui:ImagePreviewControl  AreaData="{Binding AreaData}" ImageSource="{Binding Preview.FileName}" ></ui:ImagePreviewControl>
     </Grid>
 </UserControl>

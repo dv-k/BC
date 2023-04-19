@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace BlackCleaner.WPF.ViewModels
 {
@@ -16,6 +17,7 @@ namespace BlackCleaner.WPF.ViewModels
         public ImagePreviewViewModel()
         {
             CloseCommand = new DelegateCommand<object>(CloseCommandAction, CanCloseCommandAction);
+            SizeChangedCommand = new DelegateCommand<object>(SizeChangedCommandAction, CanSizeChangedCommandAction);
         }
 
         #region property CropdetectInfo
@@ -54,15 +56,13 @@ namespace BlackCleaner.WPF.ViewModels
         #endregion
 
         #region property HeightPreview
-        private double _heightPreview = Double.NaN;
+        private AreaData _areaData;
 
+        public AreaData AreaData { get => _areaData; set => SetProperty(ref _areaData, value, AreaDataChanged); }
 
-
-        public double HeightPreview { get => _heightPreview; set => SetProperty(ref _heightPreview, value, HeightPreviewChanged); }
-
-        private void HeightPreviewChanged()
+        private void AreaDataChanged()
         {
-            UpdateHW();
+         
         }
         #endregion
         #region property WidthPreview
@@ -74,39 +74,17 @@ namespace BlackCleaner.WPF.ViewModels
 
         private void WidthPreviewChanged()
         {
-            UpdateHW();
+          
         }
         #endregion
 
 
-        #region property WidthRegion
-        private double _widthRegion = 0;
 
 
 
-        public double WidthRegion { get => _widthRegion; set => SetProperty(ref _widthRegion, value, WidthRegionChanged); }
-
-        private void WidthRegionChanged()
-        {
-
-        }
-        #endregion
-
-        #region property HeightRegion
-        private double _heightRegion = 0;
 
 
-
-        public double HeightRegion { get => _heightRegion; set => SetProperty(ref _heightRegion, value, HeightRegionChanged); }
-
-        private void HeightRegionChanged()
-        {
-
-        }
-        #endregion
-
-
-        #region conmmand OpenFileCommand 
+        #region conmmand CloseCommand 
         public DelegateCommand<object> CloseCommand { get; private set; }
 
 
@@ -124,8 +102,21 @@ namespace BlackCleaner.WPF.ViewModels
         }
         #endregion
 
-        
 
+        #region conmmand SizeChangedCommand 
+        public DelegateCommand<object> SizeChangedCommand { get; private set; }
+
+
+        void SizeChangedCommandAction(object parameter)
+        {
+          
+        }
+
+        bool CanSizeChangedCommandAction(object parameter)
+        {
+            return true;
+        }
+        #endregion
         public string Title => "Предварительный просмотр";
 
         public event Action<IDialogResult> RequestClose;
@@ -153,16 +144,11 @@ namespace BlackCleaner.WPF.ViewModels
             Preview = parameters.GetValue<ScreenshotInfo>("IP_ScreenshotInfo");
 
 
-            HeightPreview = MediaInfo.Height;
-            WidthPreview = MediaInfo.Width;
+            AreaData = new AreaData(CropdetectInfo, MediaInfo.Width, MediaInfo.Height);
 
 
         }
 
-        private  void UpdateHW()
-        {
-            WidthRegion = MediaInfo.Width;
-           HeightRegion = MediaInfo.Height ;
-        }
+     
     }
 }

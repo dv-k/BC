@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33213.308
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlackCleaner.WPF", "..\BlackCleaner\BlackCleaner.WPF\BlackCleaner.WPF.csproj", "{4AED2B94-0E29-46C5-9C6D-9AB1435B4551}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlackCleaner.WPF", "BlackCleaner\BlackCleaner.WPF\BlackCleaner.WPF.csproj", "{2A63A628-AF98-4EAB-BFBC-FC92FA308BAF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,10 +11,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{4AED2B94-0E29-46C5-9C6D-9AB1435B4551}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4AED2B94-0E29-46C5-9C6D-9AB1435B4551}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4AED2B94-0E29-46C5-9C6D-9AB1435B4551}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4AED2B94-0E29-46C5-9C6D-9AB1435B4551}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2A63A628-AF98-4EAB-BFBC-FC92FA308BAF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2A63A628-AF98-4EAB-BFBC-FC92FA308BAF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2A63A628-AF98-4EAB-BFBC-FC92FA308BAF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2A63A628-AF98-4EAB-BFBC-FC92FA308BAF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
