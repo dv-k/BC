@@ -11,7 +11,6 @@ namespace BlackCleaner.WPF.Services
 {
     public abstract class FfmpegBase
     {
-
         public abstract List<string> Start(string arg);
         public List<string> Start(string app, string arg)
         {
@@ -35,8 +34,9 @@ namespace BlackCleaner.WPF.Services
                 {
                     if (e.Data != null)
                     {
-                        Debug.WriteLine(e.Data);
-                        output.Add(e.Data.Trim());
+                        string newData = e.Data.Trim();
+                        Debug.WriteLine(newData);
+                           output.Add(newData);
                     }
 
                 };
@@ -46,6 +46,7 @@ namespace BlackCleaner.WPF.Services
                 build.BeginOutputReadLine();
                 build.WaitForExit();
 
+                Debug.WriteLine("ExitCode: " + build.ExitCode);
                 return output;
             }
         }

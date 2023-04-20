@@ -27,11 +27,11 @@ namespace BlackCleaner.WPF.Services
         public List<CropdetectInfo> Cropdetect(string inputfile)
         {
             DebugStart();
-            var allLine =  string.Join("\n", Start($"-i \"{inputfile}\" -vf cropdetect,metadata=mode=print -f null -"));
+            var allLine =  string.Join("\n", Start($"-i \"{inputfile}\" -vf cropdetect -f null -"));
 
 
        // Duration:\s * ([\d:.] *)[\d\D] * Stream *[\d\D] *,\s(\d +)x(\d +)
-            Regex regex = new Regex(@"x1:(\d+)\s*x2:(\d+)\s*y1:(\d+)\s*y2:(\d+)\s*w:(\d+)\s*h:(\d+)[xypts:\d\s]*\s+t:([\d.]+)");
+            Regex regex = new Regex(@"x1:(\d+)\s*x2:(\d+)\s*y1:(\d+)\s*y2:(\d+)[whxypts:\d\s]*\s+t:([\d.]+)");
             MatchCollection matches = regex.Matches(allLine);
             List<CropdetectInfo> result = new List<CropdetectInfo>();
             for (int i = 0; i < matches.Count; i++)
@@ -39,13 +39,43 @@ namespace BlackCleaner.WPF.Services
                 var match = matches[i];
                 result.Add(new CropdetectInfo( TimeSpan.FromSeconds(Double.Parse(match.Groups[5].Value.Replace('.', ','))),
                 double.Parse(match.Groups[1].Value),
-                double.Parse(match.Groups[2].Value),
-                double.Parse(match.Groups[3].Value),
-                double.Parse(match.Groups[4].Value), double.Parse(match.Groups[5].Value), double.Parse(match.Groups[6].Value)));
+                double.Parse(match.Groups[2].Value) + 1,
+                double.Parse(match.Groups[3].Value) ,
+                double.Parse(match.Groups[4].Value) + 1));
             }
 
             return result;
 
+
+
+        }
+
+        public async Task CroppingAsync(string inputfile, string outputfile, string сrop)
+        {
+             await Task.Run(() => Cropping(inputfile, outputfile, сrop));
+        }
+
+        public void Cropping(string inputfile, string outputfile, string сrop)
+        {
+            DebugStart();
+            var allLine = string.Join("\n", Start($"-i {inputfile} -vf crop={сrop} {outputfile} "));
+
+
+      /*     
+            Regex regex = new Regex(@"x1:(\d+)\s*x2:(\d+)\s*y1:(\d+)\s*y2:(\d+)\s*w:(\d+)\s*h:(\d+)[xypts:\d\s]*\s+t:([\d.]+)");
+            MatchCollection matches = regex.Matches(allLine);
+            List<CropdetectInfo> result = new List<CropdetectInfo>();
+            for (int i = 0; i < matches.Count; i++)
+            {
+                var match = matches[i];
+                result.Add(new CropdetectInfo(TimeSpan.FromSeconds(Double.Parse(match.Groups[5].Value.Replace('.', ','))),
+                double.Parse(match.Groups[1].Value),
+                double.Parse(match.Groups[2].Value),
+                double.Parse(match.Groups[3].Value),
+                double.Parse(match.Groups[4].Value), double.Parse(match.Groups[5].Value), double.Parse(match.Groups[6].Value)));
+            }*/
+
+     
 
 
         }

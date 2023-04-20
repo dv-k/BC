@@ -9,7 +9,7 @@
         xmlns:prism="http://prismlibrary.com/"
         prism:ViewModelLocator.AutoWireViewModel="True"
         Title="{Binding DisplayName}" Height="450" Width="800">
-    <Grid>
+    <Grid >
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="2*"/>
             <ColumnDefinition Width="5"/>
@@ -32,28 +32,28 @@
             <TextBlock Text="{Binding PathFile}" ></TextBlock>
         </StatusBar>
 
-        <ListBox Margin="10,10,10,10"  SelectedItem="{Binding SelectedPreview}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto"  Grid.Row="1" ItemsSource="{Binding Previews}" >
+        <ListBox IsEnabled="{Binding    IsEnabled}" Margin="10,10,10,10"  SelectedItem="{Binding SelectedPreview}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto"  Grid.Row="1" ItemsSource="{Binding Previews}" >
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <StackPanel>
                         <Image  Source="{Binding FileName}"></Image>
                         <TextBlock Text="{Binding Timestamp}" TextAlignment="Center"></TextBlock>
                     </StackPanel>
-                   
+
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
-                    
-                
-                        <WrapPanel ItemWidth="150" />
-                 
+
+
+                    <WrapPanel ItemWidth="150" />
+
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
         </ListBox>
 
         <Label Grid.Column="2" Content="Колличесво превью:" Margin="10,10,10,0" Grid.Row="1" VerticalAlignment="Top"/>
-        <TextBox Grid.Column="3" Margin="10,10,10,0" Grid.Row="1" TextWrapping="Wrap" Text="{Binding CountPreviews, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Height="26"/>
+        <TextBox  IsEnabled="{Binding    IsEnabled}" Grid.Column="3" Margin="10,10,10,0" Grid.Row="1" TextWrapping="Wrap" Text="{Binding CountPreviews, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Height="26"/>
         <Label Grid.Column="2" Content="Продолжительность:" Margin="10,41,10,0" Grid.Row="1" VerticalAlignment="Top"/>
         <Label Grid.Column="3" Margin="10,41,10,0" Grid.Row="1"  Content="{Binding MediaInfo.Duration}" VerticalAlignment="Top" Height="26" FontWeight="Bold"/>
         <Label Grid.Column="2" Content="Размер:" Margin="10,72,10,0" Grid.Row="1" VerticalAlignment="Top"/>
@@ -63,22 +63,28 @@
             <TextBlock  Text="{Binding MediaInfo.Height}"></TextBlock>
         </WrapPanel>
         <Label Grid.Column="2" Content="Область:" Margin="10,103,10,0" Grid.Row="1" VerticalAlignment="Top"/>
-        <ComboBox Grid.Column="3" Margin="10,103,10,0" Grid.Row="1" ItemsSource="{Binding CropdetectInfo}"  SelectedItem="{Binding SelectedCropdetectInfo}"  VerticalAlignment="Top" Height="26" FontWeight="Bold">
+        <ComboBox IsEnabled="{Binding    IsEnabled}" Grid.Column="3" Margin="10,103,10,0" Grid.Row="1" ItemsSource="{Binding CropdetectInfo}"  SelectedItem="{Binding SelectedCropdetectInfo}"  VerticalAlignment="Top" Height="45" FontWeight="Bold">
             <ComboBox.ItemTemplate>
                 <DataTemplate>
-                    <WrapPanel>
-                        <TextBlock Text="{Binding X1}"></TextBlock>
-                        <TextBlock Text=":"></TextBlock>
-                        <TextBlock Text="{Binding Y1}"></TextBlock>
-                        <TextBlock Text=":"></TextBlock>
-                        <TextBlock Text="{Binding X2}"></TextBlock>
-                        <TextBlock Text=":"></TextBlock>
-                        <TextBlock Text="{Binding Y2}"></TextBlock>
-                    </WrapPanel>
-                   
+                    <StackPanel>
+                        <WrapPanel>
+                            <TextBlock Text="x1="></TextBlock>
+                            <TextBlock Text="{Binding X1}"></TextBlock>
+                            <TextBlock Text="; y1="></TextBlock>
+                            <TextBlock Text="{Binding Y1}"></TextBlock>
+                        </WrapPanel>
+                        <WrapPanel>
+                            <TextBlock Text="x2="></TextBlock>
+                            <TextBlock Text="{Binding X2}"></TextBlock>
+                            <TextBlock Text="; y2="></TextBlock>
+                            <TextBlock Text="{Binding Y2}"></TextBlock>
+                        </WrapPanel>
+                    </StackPanel>
                 </DataTemplate>
             </ComboBox.ItemTemplate>
         </ComboBox>
+        <Button  IsEnabled="{Binding    IsEnabled}" Grid.Column="3" Command="{Binding StartCroppingCommand}" Content="Обрезать" Margin="10,0,10,10" Grid.Row="1" VerticalAlignment="Bottom"/>
+        <Label Grid.Column="2" Content="- для открытия файла используйте меню: &quot;Файл-&gt;Открыть&quot;;&#xD;&#xA;- для изменения области обрезки нажмите на любую из превью;&#xD;&#xA;- для обрезки по выбранным параметрам нажмите кнопку &#xD;&#xA;&quot;Обрезать&quot;." HorizontalAlignment="Left" Margin="10,0,0,35" Grid.Row="1" VerticalAlignment="Bottom" Grid.ColumnSpan="2" Height="119" Width="378"/>
 
 
     </Grid>

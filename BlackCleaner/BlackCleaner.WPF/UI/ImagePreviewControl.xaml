@@ -10,11 +10,12 @@
         <Image x:Name="image"    >
 
         </Image>
-        <Grid x:Name="rectanglemain"    >
-            <Grid  Background="#7F0000FD"></Grid>
-            <Border x:Name="rectangle"  Background="#7F808000"   >
 
-            </Border>
+        <Grid x:Name="rectanglemain" MouseMove="rectanglemain_MouseMove"    >
+            <Grid  Background="#7F0000FD"></Grid>
+            <Grid  x:Name="rectangle"  Background="#7F808000" ></Grid>
+            <Border x:Name="rectangleBorder" BorderThickness="2"  BorderBrush="White" MouseMove="rectangleBorder_MouseMove" MouseDown="rectangleBorder_MouseDown" MouseUp="rectangleBorder_MouseUp"  ></Border>
+        
         </Grid>
         
 

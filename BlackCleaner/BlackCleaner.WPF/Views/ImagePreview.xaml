@@ -7,7 +7,7 @@
              mc:Ignorable="d" 
              xmlns:prism="http://prismlibrary.com/" xmlns:i="http://schemas.microsoft.com/xaml/behaviors" xmlns:ui="clr-namespace:BlackCleaner.WPF.UI"
              prism:ViewModelLocator.AutoWireViewModel="True"
-             d:DesignHeight="450" d:DesignWidth="800"
+             d:DesignHeight="450" d:DesignWidth="800" Background="#FFE6E6E6"
 
              >
     <prism:Dialog.WindowStyle>
@@ -18,6 +18,10 @@
         </Style>
     </prism:Dialog.WindowStyle>
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="206*"/>
+            <RowDefinition Height="30"/>
+        </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="181*"/>
             <ColumnDefinition Width="40"/>
@@ -27,11 +31,14 @@
         <Label Content="Y1:" Margin="5,41,5,0" VerticalAlignment="Top" Grid.Column="1"/>
         <Label Content="X2:" Margin="5,72,5,0" VerticalAlignment="Top" Grid.Column="1"/>
         <Label Content="Y2:" Margin="5,103,5,0" VerticalAlignment="Top" Grid.Column="1"/>
-        <TextBox Grid.Column="2"  Margin="5,10,5,0" TextWrapping="Wrap" Text="{Binding CropdetectInfo.X1}" VerticalAlignment="Top" Width="50"/>
-        <TextBox Grid.Column="2"  Margin="5,41,5,0" TextWrapping="Wrap" Text="{Binding CropdetectInfo.Y1}" VerticalAlignment="Top" Width="50"/>
-        <TextBox Grid.Column="2"  Margin="5,72,5,0" TextWrapping="Wrap" Text="{Binding CropdetectInfo.X2}" VerticalAlignment="Top" Width="50"/>
-        <TextBox Grid.Column="2"  Margin="5,103,5,0" TextWrapping="Wrap" Text="{Binding CropdetectInfo.Y2}" VerticalAlignment="Top" Width="50"/>
-        <Button Grid.Column="1"  Command="{Binding CloseCommand}" Content="Принять" Margin="5,0,5,10" VerticalAlignment="Bottom" Grid.ColumnSpan="2"/>
-        <ui:ImagePreviewControl  AreaData="{Binding AreaData}" ImageSource="{Binding Preview.FileName}" ></ui:ImagePreviewControl>
+        <TextBox Grid.Column="2"  Margin="5,10,5,0" TextWrapping="Wrap" Text="{Binding AreaData.Area.X1}"  VerticalAlignment="Top" Width="50" />
+        <TextBox Grid.Column="2"  Margin="5,41,5,0" TextWrapping="Wrap" Text="{Binding AreaData.Area.Y1}" VerticalAlignment="Top" Width="50"/>
+        <TextBox Grid.Column="2"  Margin="5,72,5,0" TextWrapping="Wrap" Text="{Binding AreaData.Area.X2}" VerticalAlignment="Top" Width="50"/>
+        <TextBox Grid.Column="2"  Margin="5,103,5,0" TextWrapping="Wrap" Text="{Binding AreaData.Area.Y2 }" VerticalAlignment="Top" Width="50"/>
+        <Button Grid.Column="1"  Command="{Binding UpdatePreviewCommand}" Content="Показать" Margin="5,134,5,0" VerticalAlignment="Top" Grid.ColumnSpan="2"/>
+
+        <Button Grid.Column="1"  Command="{Binding CloseCommand}" Content="Принять" Margin="5,0,5,0" VerticalAlignment="Center" Grid.ColumnSpan="2" Grid.Row="1"/>
+        <ui:ImagePreviewControl  AreaData="{Binding AreaData, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" ImageSource="{Binding Preview.FileName}" />
+        <Label Content="Двигайте область или введите значения вручную" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Center" Width="680" Margin="10,0,0,0"/>
     </Grid>
 </UserControl>

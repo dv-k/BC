@@ -18,6 +18,7 @@ namespace BlackCleaner.WPF.ViewModels
         {
             CloseCommand = new DelegateCommand<object>(CloseCommandAction, CanCloseCommandAction);
             SizeChangedCommand = new DelegateCommand<object>(SizeChangedCommandAction, CanSizeChangedCommandAction);
+            UpdatePreviewCommand = new DelegateCommand<object>(UpdatePreviewCommandAction, CanUpdatePreviewCommandAction);
         }
 
         #region property CropdetectInfo
@@ -56,9 +57,10 @@ namespace BlackCleaner.WPF.ViewModels
         #endregion
 
         #region property HeightPreview
-        private AreaData _areaData;
+        private СropAreaData _areaData;
 
-        public AreaData AreaData { get => _areaData; set => SetProperty(ref _areaData, value, AreaDataChanged); }
+        public СropAreaData AreaData { get => _areaData; 
+            set => SetProperty(ref _areaData, value, AreaDataChanged); }
 
         private void AreaDataChanged()
         {
@@ -102,7 +104,20 @@ namespace BlackCleaner.WPF.ViewModels
         }
         #endregion
 
+        #region conmmand UpdatePreviewCommand 
+        public DelegateCommand<object> UpdatePreviewCommand { get; private set; }
 
+
+        void UpdatePreviewCommandAction(object parameter)
+        {
+            this.AreaData = new СropAreaData(this.AreaData);
+        }
+
+        bool CanUpdatePreviewCommandAction(object parameter)
+        {
+            return true;
+        }
+        #endregion
         #region conmmand SizeChangedCommand 
         public DelegateCommand<object> SizeChangedCommand { get; private set; }
 
@@ -144,7 +159,7 @@ namespace BlackCleaner.WPF.ViewModels
             Preview = parameters.GetValue<ScreenshotInfo>("IP_ScreenshotInfo");
 
 
-            AreaData = new AreaData(CropdetectInfo, MediaInfo.Width, MediaInfo.Height);
+            AreaData = new СropAreaData(CropdetectInfo, MediaInfo.Width, MediaInfo.Height);
 
 
         }

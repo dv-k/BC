@@ -7,21 +7,24 @@ using System.Threading.Tasks;
 
 namespace BlackCleaner.WPF.Model
 {
-    public class CropdetectInfo : AreaPoint
+    public class CropdetectInfo : СropArea
     {
         public CropdetectInfo(CropdetectInfo selectedCropdetectInfo) : base(selectedCropdetectInfo.X1, selectedCropdetectInfo.Y1,
-             selectedCropdetectInfo.X2, selectedCropdetectInfo.Y2, selectedCropdetectInfo.W, selectedCropdetectInfo.H)
+             selectedCropdetectInfo.X2, selectedCropdetectInfo.Y2)
         {
+
             this.Time= selectedCropdetectInfo.Time;
 
         }
 
-        public CropdetectInfo(TimeSpan time, double x1, double x2, double y1, double y2, double w, double h) : base(x1, y1, x2, y2, w, h)
+        public CropdetectInfo(TimeSpan time, double x1, double x2, double y1, double y2) : base(x1, y1, x2, y2)
         {
+
             Time = time;
         }
 
         public TimeSpan Time { get; }
-    
+
+
     }
 }

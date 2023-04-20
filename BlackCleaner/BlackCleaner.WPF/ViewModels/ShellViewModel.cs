@@ -37,9 +37,19 @@ namespace BlackCleaner.WPF.ViewModels
             _dialogService= dialogService;
 
             OpenFileCommand = new DelegateCommand<object>(OpenFileCommandAction, CanOpenFileCommandAction);
+            StartCroppingCommand = new DelegateCommand<object>(StartCroppingCommandAction, CanStartCroppingCommandAction);
 
-        
-         
+
+            if(!File.Exists(Path.Combine("ffmpeg", "ffmpeg.exe")) || !File.Exists(Path.Combine("ffmpeg", "ffprobe.exe")))
+            {
+                this.Status = "Нет файла ffmpeg.exe или ffprobe.exe в каталоге ffmpeg!";
+            }
+            else
+            {
+                this.Status = "Ожидание выбора файла";
+            }
+
+
         }
         #region property Status
         private string _status = "...";
@@ -66,6 +76,15 @@ namespace BlackCleaner.WPF.ViewModels
         private void PathFileChanged()
         {
            
+        }
+        #endregion
+        #region property PathFile
+        private bool _isEnabled =  false;
+        public bool IsEnabled { get => _isEnabled; set => SetProperty(ref _isEnabled, value, IsEnabledChanged); }
+
+        private void IsEnabledChanged()
+        {
+
         }
         #endregion
 
@@ -175,13 +194,41 @@ namespace BlackCleaner.WPF.ViewModels
 
         bool CanOpenFileCommandAction(object parameter)
         {
+            return File.Exists(Path.Combine("ffmpeg","ffmpeg.exe")) && File.Exists(Path.Combine("ffmpeg", "ffprobe.exe"));
+        }
+        #endregion
+
+        #region conmmand OpenFileCommand 
+        public DelegateCommand<object> StartCroppingCommand { get; private set; }
+
+
+        async void StartCroppingCommandAction(object parameter)
+        {
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.FileName = Path.GetFileNameWithoutExtension(this.PathFile) + "-cropping" + Path.GetExtension(this.PathFile);
+
+            if (saveFileDialog.ShowDialog() == true)
+            {
+                IsEnabled = false;
+                Status = "Обработка...";
+                if (saveFileDialog.OverwritePrompt)
+                    File.Delete(saveFileDialog.FileName);
+                string сrop = $"{(this._selectedcropdetectInfo.X2 - this._selectedcropdetectInfo.X1)}:{this._selectedcropdetectInfo.Y2 - this._selectedcropdetectInfo.Y1}:{this._selectedcropdetectInfo.X1}:{this._selectedcropdetectInfo.Y1}";
+                await  _ffmpeg.CroppingAsync(this.PathFile, saveFileDialog.FileName, сrop);
+                Status = "Готово";
+                IsEnabled = true;
+            } 
+        }
+
+        bool CanStartCroppingCommandAction(object parameter)
+        {
             return true;
         }
         #endregion
 
-
         async void LoadFile()
         {
+            IsEnabled = false;
             Status = "Подождите...";
 
             this.MediaInfo =  _ffprobe.GetMediaInfo(PathFile);
@@ -190,10 +237,12 @@ namespace BlackCleaner.WPF.ViewModels
             Status = "Поиск области...";
             CropdetectInfo = (await _ffmpeg.CropdetectAsync(PathFile)).DistinctBy(x=> x.X1 * x.X2  + x.Y1 * x.Y2).ToList();
             Status = "Готово!";
+            IsEnabled = true;
         }
 
         async Task LoadPreviews()
         {
+            IsEnabled = false;
             Status = "Загрузка превью..."; 
 
             long step = MediaInfo.Duration.Ticks / CountPreviews;
@@ -219,7 +268,7 @@ namespace BlackCleaner.WPF.ViewModels
 
             Previews = previews;
             Status = "Готово!";
-            //  Console.WriteLine("Продолжительность: " + info.Duration);
+            IsEnabled = true;
         }
     }
 }
