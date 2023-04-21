@@ -1,0 +1,91 @@
+﻿<Window x:Class="BlackCleaner.WPF.Views.Shell"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:BlackCleaner.WPF"
+        mc:Ignorable="d"
+
+        xmlns:prism="http://prismlibrary.com/"
+        prism:ViewModelLocator.AutoWireViewModel="True"
+        Title="{Binding DisplayName}" Height="450" Width="800">
+    <Grid >
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition Width="5"/>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="1*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="20"/>
+            <RowDefinition Height="375*"/>
+            <RowDefinition Height="25"/>
+        </Grid.RowDefinitions>
+
+        <Menu Grid.ColumnSpan="4"   >
+            <MenuItem Header="Файл">
+                <MenuItem Header="Открыть" Command="{Binding OpenFileCommand}"></MenuItem>
+            </MenuItem>
+        </Menu>
+        <StatusBar Grid.ColumnSpan="4" Grid.Row="2"  >
+            <TextBlock Text="{Binding Status}"></TextBlock>
+            <TextBlock Text="{Binding PathFile}" ></TextBlock>
+        </StatusBar>
+
+        <ListBox IsEnabled="{Binding    IsEnabled}" Margin="10,10,10,10"  SelectedItem="{Binding SelectedPreview}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto"  Grid.Row="1" ItemsSource="{Binding Previews}" >
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel>
+                        <Image  Source="{Binding FileName}"></Image>
+                        <TextBlock Text="{Binding Timestamp}" TextAlignment="Center"></TextBlock>
+                    </StackPanel>
+
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+
+
+                    <WrapPanel ItemWidth="150" />
+
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+        </ListBox>
+
+        <Label Grid.Column="2" Content="Колличесво превью:" Margin="10,10,10,0" Grid.Row="1" VerticalAlignment="Top"/>
+        <TextBox  IsEnabled="{Binding    IsEnabled}" Grid.Column="3" Margin="10,10,10,0" Grid.Row="1" TextWrapping="Wrap" Text="{Binding CountPreviews, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Height="26"/>
+        <Label Grid.Column="2" Content="Продолжительность:" Margin="10,41,10,0" Grid.Row="1" VerticalAlignment="Top"/>
+        <Label Grid.Column="3" Margin="10,41,10,0" Grid.Row="1"  Content="{Binding MediaInfo.Duration}" VerticalAlignment="Top" Height="26" FontWeight="Bold"/>
+        <Label Grid.Column="2" Content="Размер:" Margin="10,72,10,0" Grid.Row="1" VerticalAlignment="Top"/>
+        <WrapPanel Grid.Column="3" Margin="10,72,10,0" Grid.Row="1" VerticalAlignment="Top" Height="26" >
+            <TextBlock   Text="{Binding MediaInfo.Width}"></TextBlock>
+            <TextBlock>x</TextBlock>
+            <TextBlock  Text="{Binding MediaInfo.Height}"></TextBlock>
+        </WrapPanel>
+        <Label Grid.Column="2" Content="Область:" Margin="10,103,10,0" Grid.Row="1" VerticalAlignment="Top"/>
+        <ComboBox IsEnabled="{Binding    IsEnabled}" Grid.Column="3" Margin="10,103,10,0" Grid.Row="1" ItemsSource="{Binding CropdetectInfo}"  SelectedItem="{Binding SelectedCropdetectInfo}"  VerticalAlignment="Top" Height="45" FontWeight="Bold">
+            <ComboBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel>
+                        <WrapPanel>
+                            <TextBlock Text="x1="></TextBlock>
+                            <TextBlock Text="{Binding X1}"></TextBlock>
+                            <TextBlock Text="; y1="></TextBlock>
+                            <TextBlock Text="{Binding Y1}"></TextBlock>
+                        </WrapPanel>
+                        <WrapPanel>
+                            <TextBlock Text="x2="></TextBlock>
+                            <TextBlock Text="{Binding X2}"></TextBlock>
+                            <TextBlock Text="; y2="></TextBlock>
+                            <TextBlock Text="{Binding Y2}"></TextBlock>
+                        </WrapPanel>
+                    </StackPanel>
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+        </ComboBox>
+        <Button  IsEnabled="{Binding    IsEnabled}" Grid.Column="3" Command="{Binding StartCroppingCommand}" Content="Обрезать" Margin="10,0,10,10" Grid.Row="1" VerticalAlignment="Bottom"/>
+        <Label Grid.Column="2" Content="- для открытия файла используйте меню: &quot;Файл-&gt;Открыть&quot;;&#xD;&#xA;- для изменения области обрезки нажмите на любую из превью;&#xD;&#xA;- для обрезки по выбранным параметрам нажмите кнопку &#xD;&#xA;&quot;Обрезать&quot;." HorizontalAlignment="Left" Margin="10,0,0,35" Grid.Row="1" VerticalAlignment="Bottom" Grid.ColumnSpan="2" Height="119" Width="378"/>
+
+
+    </Grid>
+</Window>
