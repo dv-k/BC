@@ -1,4 +1,5 @@
-﻿using BlackCleaner.WPF.Model;
+﻿using BC.Net46.Model;
+using BlackCleaner.WPF.Model;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -8,41 +9,75 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
+
+
 namespace BlackCleaner.WPF.Services
 {
     public class Ffprobe : FfmpegBase
     {
-        public Ffprobe()
+        public Ffprobe() : base(Path.Combine("ffmpeg", "ffprobe.exe"))
         {
 
+        }
+        public async Task<MediaInfo> GetMediaInfoAsync(string inputfile)
+        {
+            return await Task.Run(() => GetMediaInfo(inputfile));
         }
         public MediaInfo GetMediaInfo (string inputfile)
         {
             DebugStart();
 
+            var allLineStreams = string.Join("\n", Start($" -loglevel error -show_streams {inputfile}"));
 
-            DebugStart();
-            var allLine = string.Join(" ", Start($"-i {inputfile}"));
+            //Обрабатываем потоки
+            Regex regexSreams = new Regex("\\[STREAM\\]\\s([\\d\\D]*?)\\s\\[\\/STREAM\\]", RegexOptions.IgnoreCase | RegexOptions.Multiline | RegexOptions.CultureInvariant);
+            MatchCollection matchesSreams = regexSreams.Matches(allLineStreams);
+            List<VideoStreamInfo> videoStreams = new List<VideoStreamInfo>();
+            List<AudioStreamInfo> audioStreams = new List<AudioStreamInfo>();
 
-            Regex regex = new Regex(@"Duration:\s*([\d:.]*)[\d\D]*Stream*[\d\D]*,\s(\d+)x(\d+)");
-            MatchCollection matches = regex.Matches(allLine);
-        
-
-            if(matches.Count > 0) 
+            for (int i = 0; i < matchesSreams.Count; i++)
             {
-                var match = matches[0];
-                return new MediaInfo(TimeSpan.Parse(match.Groups[1].Value), Double.Parse(match.Groups[2].Value), Double.Parse(match.Groups[3].Value));
+                var matchesSream = matchesSreams[i];
+
+                Regex regexSream = new Regex("^index=(.+)[\\d\\D]*^codec_name=(.+)[\\d\\D]*^codec_long_name=(.+)[\\d\\D]*^codec_type=(.+)[\\d\\D]*^duration=(.+)[\\d\\D]*", RegexOptions.IgnoreCase | RegexOptions.Multiline | RegexOptions.CultureInvariant);
+
+                MatchCollection matches1 = regexSream.Matches(matchesSream.Groups[0].Value);
+                if (matches1.Count > 0)
+                {
+                    var m = matches1[0];
+                    int index = int.Parse(m.Groups[1].Value);
+                    CodecInfoBase codecInfoBase = new CodecInfoBase(m.Groups[2].Value, m.Groups[3].Value);
+                    TimeSpan duration = TimeSpan.Zero;
+                    if (Double.TryParse(m.Groups[5].Value.Replace('.', ','), out double d))
+                    {
+                        duration = TimeSpan.FromSeconds(d);
+                    }
+    
+
+
+                    switch (m.Groups[4].Value.ToLower())
+                    {
+                        case "audio":
+                            audioStreams.Add(new AudioStreamInfo(index, codecInfoBase, duration));
+                            break;
+                        case "video":
+                            Regex regexVideo = new Regex("^width=(.+)[\\d\\D]*^height=(.+)[\\d\\D]", RegexOptions.IgnoreCase | RegexOptions.Multiline | RegexOptions.CultureInvariant);
+                            MatchCollection matchesVideo = regexVideo.Matches(matchesSream.Groups[1].Value);
+                            double wVideo = 0;
+                            double hVideo = 0;
+                            if (matchesVideo.Count > 0)
+                            {
+                                wVideo = double.Parse(matchesVideo[0].Groups[1].Value);
+                                hVideo = double.Parse(matchesVideo[0].Groups[2].Value);
+                            }
+                            videoStreams.Add(new VideoStreamInfo(index, codecInfoBase, duration, wVideo, hVideo));
+                            break;
+                    }
+                }
             }
-            return null;
 
+            return new MediaInfo(audioStreams, videoStreams);
 
-
-
-        }
-
-        public override List<string> Start(string arg)
-        {
-            return this.Start(Path.Combine("ffmpeg", "ffprobe.exe"), arg);
         }
     }
 }

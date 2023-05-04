@@ -214,7 +214,7 @@ namespace BlackCleaner.WPF.ViewModels
                 if (saveFileDialog.OverwritePrompt)
                     File.Delete(saveFileDialog.FileName);
                 string сrop = $"{(this._selectedcropdetectInfo.X2 - this._selectedcropdetectInfo.X1)}:{this._selectedcropdetectInfo.Y2 - this._selectedcropdetectInfo.Y1}:{this._selectedcropdetectInfo.X1}:{this._selectedcropdetectInfo.Y1}";
-                await  _ffmpeg.CroppingAsync(this.PathFile, saveFileDialog.FileName, сrop);
+                await  _ffmpeg.CroppingAsync(this.PathFile, saveFileDialog.FileName, сrop, this.MediaInfo.VideoStreams.Count > 0 ? this.MediaInfo.VideoStreams[0].Codec.CodecName : String.Empty, "copy");
                 Status = "Готово";
                 IsEnabled = true;
             } 
@@ -228,12 +228,15 @@ namespace BlackCleaner.WPF.ViewModels
 
         async void LoadFile()
         {
+            
             IsEnabled = false;
             Status = "Подождите...";
 
-            this.MediaInfo =  _ffprobe.GetMediaInfo(PathFile);
-            await LoadPreviews();
+  
 
+         this.MediaInfo = await _ffprobe.GetMediaInfoAsync(PathFile);
+           await LoadPreviews();
+            IsEnabled = false;
             Status = "Поиск области...";
             CropdetectInfo = (await _ffmpeg.CropdetectAsync(PathFile)).Distinct(new CropdetectInfoComparer()).ToList();
             Status = "Готово!";

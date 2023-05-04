@@ -74,9 +74,13 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Model\AudioStreamInfo.cs" />
+    <Compile Include="Model\CodecInfoBase.cs" />
     <Compile Include="Model\CropdetectInfo.cs" />
     <Compile Include="Model\MediaInfo.cs" />
     <Compile Include="Model\ScreenshotInfo.cs" />
+    <Compile Include="Model\StreamInfoBase.cs" />
+    <Compile Include="Model\VideoStreamInfo.cs" />
     <Compile Include="Model\СropArea.cs" />
     <Compile Include="Model\СropAreaData.cs" />
     <Compile Include="Services\Ffmpeg.cs" />

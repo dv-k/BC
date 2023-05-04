@@ -15,7 +15,8 @@ namespace BlackCleaner.WPF.Services
 {
     public class Ffmpeg : FfmpegBase
     {
-        public Ffmpeg() 
+
+        public Ffmpeg() : base(Path.Combine("ffmpeg", "ffmpeg.exe"))
         { 
 
         }
@@ -27,7 +28,7 @@ namespace BlackCleaner.WPF.Services
         public List<CropdetectInfo> Cropdetect(string inputfile)
         {
             DebugStart();
-            var allLine =  string.Join("\n", Start($"-i \"{inputfile}\" -vf cropdetect -f null -"));
+            var allLine =  string.Join("\n", Start($" -i \"{inputfile}\" -vf cropdetect -f null -"));
 
 
        // Duration:\s * ([\d:.] *)[\d\D] * Stream *[\d\D] *,\s(\d +)x(\d +)
@@ -50,32 +51,22 @@ namespace BlackCleaner.WPF.Services
 
         }
 
-        public async Task CroppingAsync(string inputfile, string outputfile, string сrop)
+        public async Task CroppingAsync(string inputfile, string outputfile, string сrop, string cv = "", string ca = "")
         {
-             await Task.Run(() => Cropping(inputfile, outputfile, сrop));
+             await Task.Run(() => Cropping(inputfile, outputfile, сrop, cv, ca));
         }
 
-        public void Cropping(string inputfile, string outputfile, string сrop)
+        public void Cropping(string inputfile, string outputfile, string сrop, string cv = "", string ca = "")
         {
             DebugStart();
-            var allLine = string.Join("\n", Start($"-i {inputfile} -vf crop={сrop} {outputfile} "));
+            string cvT = string.Empty;
+            string caT = string.Empty;
+            if (!string.IsNullOrWhiteSpace(cv))
+                cvT = "-c:v " + cv;
+            if (!string.IsNullOrWhiteSpace(ca))
+                caT = "-c:a " + ca;
 
-
-      /*     
-            Regex regex = new Regex(@"x1:(\d+)\s*x2:(\d+)\s*y1:(\d+)\s*y2:(\d+)\s*w:(\d+)\s*h:(\d+)[xypts:\d\s]*\s+t:([\d.]+)");
-            MatchCollection matches = regex.Matches(allLine);
-            List<CropdetectInfo> result = new List<CropdetectInfo>();
-            for (int i = 0; i < matches.Count; i++)
-            {
-                var match = matches[i];
-                result.Add(new CropdetectInfo(TimeSpan.FromSeconds(Double.Parse(match.Groups[5].Value.Replace('.', ','))),
-                double.Parse(match.Groups[1].Value),
-                double.Parse(match.Groups[2].Value),
-                double.Parse(match.Groups[3].Value),
-                double.Parse(match.Groups[4].Value), double.Parse(match.Groups[5].Value), double.Parse(match.Groups[6].Value)));
-            }*/
-
-     
+            var allLine = string.Join("\n", Start($"-i {inputfile} -vf crop={сrop}   {cvT} {caT}    {outputfile} "));
 
 
         }
@@ -86,14 +77,11 @@ namespace BlackCleaner.WPF.Services
         public bool Snapshot(string inputfile, string outputfile, TimeSpan time)
         {
             DebugStart();
-            Start($"-i \"{inputfile}\" -ss {time} -frames:v 1 \"{outputfile}\"");
+            Start($" -loglevel error -i \"{inputfile}\" -ss {time} -frames:v 1  \"{outputfile}\"");
             return File.Exists(outputfile);
         }
      
 
-        public override List<string> Start(string arg)
-        {
-            return this.Start(Path.Combine("ffmpeg", "ffmpeg.exe"), arg);
-        }
+
     }
 }

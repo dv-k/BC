@@ -8,7 +8,7 @@
 
         xmlns:prism="http://prismlibrary.com/"
         prism:ViewModelLocator.AutoWireViewModel="True"
-        Title="{Binding DisplayName}" Height="450" Width="800">
+        Title="{Binding DisplayName}" Height="490" MinHeight="490" Width="800">
     <Grid >
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="2*"/>
@@ -56,14 +56,45 @@
         <TextBox  IsEnabled="{Binding    IsEnabled}" Grid.Column="3" Margin="10,10,10,0" Grid.Row="1" TextWrapping="Wrap" Text="{Binding CountPreviews, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Height="26"/>
         <Label Grid.Column="2" Content="Продолжительность:" Margin="10,41,10,0" Grid.Row="1" VerticalAlignment="Top"/>
         <Label Grid.Column="3" Margin="10,41,10,0" Grid.Row="1"  Content="{Binding MediaInfo.Duration}" VerticalAlignment="Top" Height="26" FontWeight="Bold"/>
-        <Label Grid.Column="2" Content="Размер:" Margin="10,72,10,0" Grid.Row="1" VerticalAlignment="Top"/>
-        <WrapPanel Grid.Column="3" Margin="10,72,10,0" Grid.Row="1" VerticalAlignment="Top" Height="26" >
-            <TextBlock   Text="{Binding MediaInfo.Width}"></TextBlock>
-            <TextBlock>x</TextBlock>
-            <TextBlock  Text="{Binding MediaInfo.Height}"></TextBlock>
-        </WrapPanel>
-        <Label Grid.Column="2" Content="Область:" Margin="10,103,10,0" Grid.Row="1" VerticalAlignment="Top"/>
-        <ComboBox IsEnabled="{Binding    IsEnabled}" Grid.Column="3" Margin="10,103,10,0" Grid.Row="1" ItemsSource="{Binding CropdetectInfo}"  SelectedItem="{Binding SelectedCropdetectInfo}"  VerticalAlignment="Top" Height="45" FontWeight="Bold">
+        <Button  IsEnabled="{Binding    IsEnabled}" Grid.Column="3" Command="{Binding StartCroppingCommand}" Content="Обрезать" Margin="10,0,10,10" Grid.Row="1" VerticalAlignment="Bottom"/>
+        <Label Grid.Column="2" Content="- для открытия файла используйте меню: &quot;Файл-&gt;Открыть&quot;;&#xD;&#xA;- для изменения области обрезки нажмите на любую из превью;&#xD;&#xA;- для обрезки по выбранным параметрам нажмите кнопку &#xD;&#xA;&quot;Обрезать&quot;." HorizontalAlignment="Left" Margin="10,0,0,35" Grid.Row="1" VerticalAlignment="Bottom" Grid.ColumnSpan="2" Height="78" Width="378"/>
+        <TabControl  IsEnabled="{Binding    IsEnabled}" Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="3" Margin="4,72,0,180">
+            <TabItem Header="Видео потоки">
+                <Grid Background="#FFE5E5E5">
+                    <DataGrid IsReadOnly="True"  AutoGenerateColumns="False" ItemsSource="{Binding MediaInfo.VideoStreams}">
+                        <DataGrid.Columns >
+                            <DataGridTextColumn Header="Индекс"  Binding="{Binding Index}"></DataGridTextColumn>
+                            <DataGridTextColumn Header="Кодек"  Binding="{Binding Codec.CodecLongName}"></DataGridTextColumn>
+                            <DataGridTemplateColumn Header="Размер" >
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <WrapPanel>
+                                            <TextBlock Text="{Binding Width}"></TextBlock>
+                                            <TextBlock>x</TextBlock>
+                                            <TextBlock Text="{Binding Height}"></TextBlock>
+                                        </WrapPanel>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTextColumn Header="Продолжительность"  Binding="{Binding Duration}"></DataGridTextColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Аудио потоки">
+                <Grid  Background="#FFE5E5E5">
+                    <DataGrid IsReadOnly="True" ItemsSource="{Binding MediaInfo.AudioStreams}">
+                        <DataGrid.Columns >
+                            <DataGridTextColumn Header="Индекс"  Binding="{Binding Index}"></DataGridTextColumn>
+                            <DataGridTextColumn Header="Кодек"  Binding="{Binding Codec.CodecLongName}"></DataGridTextColumn>
+                            <DataGridTextColumn Header="Продолжительность"  Binding="{Binding Duration}"></DataGridTextColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </TabItem>
+        </TabControl>
+        <Label Grid.Column="2" Content="Область:" Margin="10,0,11,143" Grid.Row="1" VerticalAlignment="Bottom"/>
+        <ComboBox IsEnabled="{Binding    IsEnabled}" Grid.Column="3" Margin="11,0,10,126" Grid.Row="1" ItemsSource="{Binding CropdetectInfo}"  SelectedItem="{Binding SelectedCropdetectInfo}"  VerticalAlignment="Bottom" Height="45" FontWeight="Bold">
             <ComboBox.ItemTemplate>
                 <DataTemplate>
                     <StackPanel>
@@ -83,9 +114,6 @@
                 </DataTemplate>
             </ComboBox.ItemTemplate>
         </ComboBox>
-        <Button  IsEnabled="{Binding    IsEnabled}" Grid.Column="3" Command="{Binding StartCroppingCommand}" Content="Обрезать" Margin="10,0,10,10" Grid.Row="1" VerticalAlignment="Bottom"/>
-        <Label Grid.Column="2" Content="- для открытия файла используйте меню: &quot;Файл-&gt;Открыть&quot;;&#xD;&#xA;- для изменения области обрезки нажмите на любую из превью;&#xD;&#xA;- для обрезки по выбранным параметрам нажмите кнопку &#xD;&#xA;&quot;Обрезать&quot;." HorizontalAlignment="Left" Margin="10,0,0,35" Grid.Row="1" VerticalAlignment="Bottom" Grid.ColumnSpan="2" Height="119" Width="378"/>
-
 
     </Grid>
 </Window>

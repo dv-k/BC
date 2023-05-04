@@ -231,7 +231,14 @@ namespace BlackCleaner.WPF.ViewModels
             IsEnabled = false;
             Status = "Подождите...";
 
+
+            _ffprobe.Start($"-select_streams v:0 -show_entries stream=codec_name -of default=nk=1:nw=1 {PathFile}");
+
             this.MediaInfo =  _ffprobe.GetMediaInfo(PathFile);
+
+
+
+
             await LoadPreviews();
 
             Status = "Поиск области...";

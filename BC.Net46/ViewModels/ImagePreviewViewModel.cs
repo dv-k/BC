@@ -158,8 +158,12 @@ namespace BlackCleaner.WPF.ViewModels
             MediaInfo = parameters.GetValue<MediaInfo>("IP_MediaInfo");
             Preview = parameters.GetValue<ScreenshotInfo>("IP_ScreenshotInfo");
 
+            if(MediaInfo.VideoStreams.Count > 0)
+            {
+                AreaData = new СropAreaData(CropdetectInfo, MediaInfo.VideoStreams[0].Width, MediaInfo.VideoStreams[0].Height);
+            }
 
-            AreaData = new СropAreaData(CropdetectInfo, MediaInfo.Width, MediaInfo.Height);
+          
 
 
         }

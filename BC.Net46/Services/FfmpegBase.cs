@@ -11,15 +11,24 @@ namespace BlackCleaner.WPF.Services
 {
     public abstract class FfmpegBase
     {
-        public abstract List<string> Start(string arg);
-        public List<string> Start(string app, string arg)
+        string _pathProcess;
+        public  FfmpegBase(string pathProcess)
         {
+            _pathProcess = pathProcess;
+        }
+
+        public List<string> Start(string arg)
+        {
+            if (!ServiceAvailable)
+                throw new Exception("Service not available");
+
+            arg = $"-hide_banner {arg}";
 
             using (Process build = new Process())
             {
 
                 build.StartInfo.Arguments = arg;
-                build.StartInfo.FileName = app ;
+                build.StartInfo.FileName = _pathProcess;
                 build.StartInfo.UseShellExecute = false;
                 build.StartInfo.RedirectStandardOutput = true;
                 build.StartInfo.RedirectStandardError = true;
@@ -57,6 +66,7 @@ namespace BlackCleaner.WPF.Services
             Debug.WriteLine($"Start '{arg}'...");
         }
 
+        public bool ServiceAvailable => File.Exists(_pathProcess);
 
     }
 }
